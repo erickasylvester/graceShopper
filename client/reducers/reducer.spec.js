@@ -5,7 +5,6 @@ import {createStore, applyMiddleware} from 'redux'
 import thunkMiddleware from 'redux-thunk'
 import reducer, {getAllCandiesThunk} from './reducer'
 import enforceImmutableState from 'redux-immutable-state-invariant'
-import {Candy} from '../../server/db/models'
 
 let store
 let mockAxios
