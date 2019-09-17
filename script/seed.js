@@ -1,7 +1,19 @@
 'use strict'
 
 const db = require('../server/db')
-const {User} = require('../server/db/models')
+const {User, Candy} = require('../server/db/models')
+
+const seedCandy = [
+  {
+    name: 'Puchao',
+    imageUrl:
+      'http://cdn.shopify.com/s/files/1/0768/4331/products/UHA-Puchao-Fruit-Mix-4-Flavor-wm-800x72_1024x1024.jpg?v=1502413813'
+  },
+  {
+    name: 'Pucca',
+    imageUrl: 'https://i.ebayimg.com/images/g/vpoAAOSwufFci6je/s-l300.jpg'
+  }
+]
 
 async function seed() {
   await db.sync({force: true})
@@ -12,7 +24,12 @@ async function seed() {
     User.create({email: 'murphy@email.com', password: '123'})
   ])
 
+  await Candy.create(seedCandy[0])
+  await Candy.create(seedCandy[1])
+
   console.log(`seeded ${users.length} users`)
+  console.log(`seeded ${seedCandy.length} candies`)
+
   console.log(`seeded successfully`)
 }
 
