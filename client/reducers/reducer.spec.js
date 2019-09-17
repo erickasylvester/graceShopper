@@ -27,32 +27,62 @@
  * scoped to either the `age`, `cash`, or `possessions` slice of state.
  *
  */
+import MockAxiosAdapter from 'axios-mock-adapter'
 import {expect} from 'chai'
+import axios from 'axios'
 import {createStore, applyMiddleware} from 'redux'
-import reducer, {gotAllCandies} from 'reducer'
+import thunkMiddleware from 'redux-thunk'
+import reducer, {getAllCandiesThunk} from './reducer'
 import enforceImmutableState from 'redux-immutable-state-invariant'
+import {Candy} from '../../server/db/models'
 
 let store
+let mockAxios
 
-beforeEach(() => {
-  store = createStore(reducer, applyMiddleware(enforceImmutableState()))
-})
+describe('Thunks', () => {
+  beforeEach(() => {
+    mockAxios = new MockAxiosAdapter(axios)
+    store = createStore(
+      reducer,
+      applyMiddleware(thunkMiddleware, enforceImmutableState())
+    )
+  })
+  afterEach(() => {
+    mockAxios.restore()
+  })
 
-describe('Reducers', () => {
-  it('get all candie', async () => {
-    let candyOne = await Candy.create({
+  describe('GET /candies succeeds', () => {
+    let candyOne = {
       name: 'someJCandy',
       imageUrl:
         'http://cdn.shopify.com/s/files/1/0768/4331/products/UHA-Puchao-Fruit-Mix-4-Flavor-wm-800x72_1024x1024.jpg?v=1502413813'
-    })
-    let candyTwo = await Candy.create({
+    }
+    let candyTwo = {
       name: 'someOtherCandy',
       imageUrl:
         'http://cdn.shopify.com/s/files/1/0768/4331/products/UHA-Puchao-Fruit-Mix-4-Flavor-wm-800x72_1024x1024.jpg?v=1502413813'
+    }
+    beforeEach(() => {
+      mockAxios.onGet('/api/candies').reply(200, [candyOne, candyTwo])
     })
 
-    store.dispatch(gotAllCandies())
+    it('sets the received candies on state', async () => {
+      await store.dispatch(getAllCandiesThunk())
+      const state = store.getState()
+      expect(state.candies).to.deep.equal([candyOne, candyTwo])
+    })
+  })
 
-    expect(store.getState().candies).to.equal(2)
+  describe('GET /candies fails', () => {
+    beforeEach(() => {
+      mockAxios.onGet('/api/candies').reply(404, 'No candies today!')
+    })
+
+    it('sets the thrown error on state', async () => {
+      await store.dispatch(getAllCandiesThunk())
+      const state = store.getState()
+      console.log('Current state: ', state)
+      expect(state.candies).to.deep.equal([])
+    })
   })
 })

@@ -1,7 +1,8 @@
 import Axios from 'axios'
 
 const initialState = {
-  candies: []
+  candies: [],
+  candiesError: ''
   // singleCandy: null
 }
 
@@ -9,13 +10,13 @@ const initialState = {
 const GOT_ALL_CANDIES = 'GOT_ALL_CANDIES'
 
 //action creators
-export const gotAllCandies = candies => ({
+const gotAllCandies = candies => ({
   type: GOT_ALL_CANDIES,
   candies
 })
 
 //Thunk creators
-export const getAllCandies = () => async dispatch => {
+export const getAllCandiesThunk = () => async dispatch => {
   try {
     const {data} = await Axios.get('/api/candies')
     dispatch(gotAllCandies(data))
