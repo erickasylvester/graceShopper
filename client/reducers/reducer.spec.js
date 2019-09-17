@@ -1,32 +1,3 @@
-/*
- * READ THIS FIRST
- *
- * The default initial of the store is the following:
- *
- * {
- *   age: 0,
- *   cash: 0,
- *   posessions, []
- * }
- *
- * Look at the files in: `src/02-combine-reducers/`
- *
- * Included in that directory is a reducer named `originalReducer`. This code is
- * commented out, and represents legacy code to refactor. All these tests pass
- * with the `originalReducer` function.
- *
- * Also included in that director are the empty reducer functions named
- * `ageReducer`, `cashReducer`, and `possessionsReducer`. These are used as
- * reducer functions in a call to `combineReducers`
- *
- * The object of this test is to move the appropriate chunks of the
- * `originalReducer` into the individual reducers named above.
- *
- * You will have to subtly re-write the reducer code, as the original version
- * was returning an entire state object, and these new reducers are tightly
- * scoped to either the `age`, `cash`, or `possessions` slice of state.
- *
- */
 import MockAxiosAdapter from 'axios-mock-adapter'
 import {expect} from 'chai'
 import axios from 'axios'
